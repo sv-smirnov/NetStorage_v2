@@ -4,10 +4,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class ClientController implements Initializable {
@@ -58,6 +60,7 @@ public class ClientController implements Initializable {
         login.clear();
         password.clear();
     }
+
     public void setAuthorized(boolean b) {
         if (b) {
             serverStatus.setText("Подключение установлено");
@@ -72,8 +75,7 @@ public class ClientController implements Initializable {
             deleteButton.setVisible(true);
             uploadButton.setVisible(true);
             fileInfo.setVisible(true);
-        }
-        else {
+        } else {
             serverStatus.setText("Введите логин/пароль");
             login.setVisible(true);
             password.setVisible(true);
@@ -99,15 +101,24 @@ public class ClientController implements Initializable {
 
 
     public void selectFile(ActionEvent actionEvent) {
+
             FileChooser fileChooser = new FileChooser();
             File selectedFile = fileChooser.showOpenDialog(null);
             if (selectedFile != null) {
                 fileName = selectedFile.getName();
                 clientConnection.send("/file " + fileName);
                 filePath = selectedFile.getAbsolutePath();
-                System.out.println(fileName);
                 fileInfo.setText(filePath);
             } else System.out.println("Выберите файл");
-        }
 
+    }
+
+    public void listSelect(MouseEvent mouseEvent) {
+        if (fileList.getSelectionModel().getSelectedItem() != null) {
+            fileName = fileList.getSelectionModel().getSelectedItem().toString();
+            fileInfo.setText(fileName);
+            clientConnection.send("/file " + fileName);
+            fileList.getSelectionModel().clearSelection();
+        }
+    }
 }
