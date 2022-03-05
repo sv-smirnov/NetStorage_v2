@@ -42,8 +42,6 @@ public class ClientController implements Initializable {
     @FXML
     TextField fileInfo;
     @FXML
-    TextArea fileList2;
-    @FXML
     ListView<String> fileList;
 
 
@@ -123,6 +121,7 @@ public class ClientController implements Initializable {
     }
 
     public void delete(ActionEvent actionEvent) {
+        fileList.getItems().clear();
         clientConnection.send("/delete " + fileName);
     }
 }

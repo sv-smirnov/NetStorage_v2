@@ -40,7 +40,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
                 channelHandlerContext.writeAndFlush("/authok");
                 createDirectory();
                 sendFileList(channelHandlerContext);
-            } else channelHandlerContext.writeAndFlush("Неверный логин/пароль!");
+            } else channelHandlerContext.writeAndFlush("/servMsg " + "Неверный логин/пароль!");
         }
         if (s.startsWith("/reg")) {
             login = s.split("\\s")[1];
@@ -52,13 +52,13 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
             } else channelHandlerContext.writeAndFlush("Такая учетная запись уже существует!");
         }
 
+
         if (s.startsWith("/file")) {
             filename = s.substring(6);
         }
 
         if (s.startsWith("/delete")) {
             String filePath = dir + "\\" + filename;
-            System.out.println(filePath);
             boolean b = Files.deleteIfExists(Paths.get(filePath));
             sendFileList(channelHandlerContext);
             System.out.println(b);

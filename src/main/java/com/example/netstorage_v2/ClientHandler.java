@@ -25,10 +25,10 @@ public class ClientHandler extends SimpleChannelInboundHandler<String> {
         if (s.startsWith("/servMsg")) {
             controller.serverStatus.setText(s.substring(9));
         }
-        if (s.startsWith("/list")) {
+        if (s.contains("/list")) {
             System.out.println(s);
-            String[] str = s.substring(7).split(",");
-            System.out.println(str);
+            String[] str = s.substring(s.indexOf("/list") + 7).split(",");
+            controller.fileList.getItems().clear();
             for (int i = 0; i < str.length; i++) {
                 controller.fileList.getItems().add(str[i]);
             }
