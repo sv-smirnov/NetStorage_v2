@@ -64,30 +64,30 @@ public class ClientController implements Initializable {
     public void setAuthorized(boolean b) {
         if (b) {
             serverStatus.setText("Подключение установлено");
-            login.setVisible(false);
-            password.setVisible(false);
-            loginLabel.setVisible(false);
-            passwordLabel.setVisible(false);
-            sendAuthButton.setVisible(false);
-            registrationButton.setVisible(false);
-            selectButton.setVisible(true);
-            downloadButton.setVisible(true);
-            deleteButton.setVisible(true);
-            uploadButton.setVisible(true);
-            fileInfo.setVisible(true);
+            login.setDisable(true);
+            password.setDisable(true);
+            loginLabel.setDisable(true);
+            passwordLabel.setDisable(true);
+            sendAuthButton.setDisable(true);
+            registrationButton.setDisable(true);
+            selectButton.setDisable(false);
+            downloadButton.setDisable(false);
+            deleteButton.setDisable(false);
+            uploadButton.setDisable(false);
+            fileInfo.setDisable(false);
         } else {
             serverStatus.setText("Введите логин/пароль");
-            login.setVisible(true);
-            password.setVisible(true);
-            loginLabel.setVisible(true);
-            passwordLabel.setVisible(true);
-            sendAuthButton.setVisible(true);
-            registrationButton.setVisible(true);
-            selectButton.setVisible(false);
-            downloadButton.setVisible(false);
-            deleteButton.setVisible(false);
-            uploadButton.setVisible(false);
-            fileInfo.setVisible(false);
+            login.setDisable(false);
+            password.setDisable(false);
+            loginLabel.setDisable(false);
+            passwordLabel.setDisable(false);
+            sendAuthButton.setDisable(false);
+            registrationButton.setDisable(false);
+            selectButton.setDisable(true);
+            downloadButton.setDisable(true);
+            deleteButton.setDisable(true);
+            uploadButton.setDisable(true);
+            fileInfo.setDisable(true);
         }
     }
 
@@ -120,5 +120,9 @@ public class ClientController implements Initializable {
             clientConnection.send("/file " + fileName);
             fileList.getSelectionModel().clearSelection();
         }
+    }
+
+    public void delete(ActionEvent actionEvent) {
+        clientConnection.send("/delete " + fileName);
     }
 }

@@ -7,6 +7,8 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,8 +53,15 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
         }
 
         if (s.startsWith("/file")) {
-            filename = s.split("\\s")[1];
-            channelHandlerContext.writeAndFlush("получен " + filename);
+            filename = s.substring(6);
+        }
+
+        if (s.startsWith("/delete")) {
+            String filePath = dir + "\\" + filename;
+            System.out.println(filePath);
+            boolean b = Files.deleteIfExists(Paths.get(filePath));
+            sendFileList(channelHandlerContext);
+            System.out.println(b);
         }
 
 

@@ -3,21 +3,20 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="436.0" prefWidth="275.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.netstorage_v2.ClientController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="436.0" prefWidth="275.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.netstorage_v2.ClientController">
     <children>
         <TextField fx:id="login" layoutX="104.0" layoutY="18.0" prefHeight="25.0" prefWidth="160.0" />
         <TextField fx:id="password" layoutX="104.0" layoutY="48.0" onAction="#sendAuth" prefHeight="25.0" prefWidth="160.0" />
         <Label fx:id="loginLabel" layoutX="14.0" layoutY="22.0" prefHeight="17.0" prefWidth="69.0" text="Login:" />
         <Label fx:id="passwordLabel" layoutX="14.0" layoutY="52.0" prefHeight="17.0" prefWidth="69.0" text="Password:" />
         <Button fx:id="sendAuthButton" layoutX="14.0" layoutY="89.0" mnemonicParsing="false" onAction="#sendAuth" prefHeight="25.0" prefWidth="108.0" text="LOGIN" />
-        <TextArea fx:id="fileList2" layoutX="13.0" layoutY="160.0" prefHeight="161.0" prefWidth="85.0" />
         <Button fx:id="selectButton" layoutX="49.0" layoutY="358.0" mnemonicParsing="false" onAction="#selectFile" prefHeight="25.0" prefWidth="79.0" text="Select" />
         <Button fx:id="uploadButton" layoutX="49.0" layoutY="397.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="79.0" text="Upload" />
-        <Button fx:id="deleteButton" layoutX="167.0" layoutY="358.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="79.0" text="Delete" />
+        <Button fx:id="deleteButton" onAction="#delete" layoutX="167.0" layoutY="358.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="79.0" text="Delete" />
         <Button fx:id="downloadButton" layoutX="167.0" layoutY="397.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="79.0" text="Download" />
       <Button fx:id="registrationButton" layoutX="153.0" layoutY="89.0" mnemonicParsing="false" onAction="#registration" prefHeight="25.0" prefWidth="108.0" text="REGISTRATION" />
       <TextField fx:id="serverStatus" editable="false" layoutX="14.0" layoutY="126.0" prefHeight="25.0" prefWidth="248.0" />
       <TextField fx:id="fileInfo" editable="false" layoutX="14.0" layoutY="326.0" prefHeight="25.0" prefWidth="248.0" />
-      <ListView fx:id="fileList" onMouseClicked="#listSelect" layoutX="115.0" layoutY="160.0" prefHeight="161.0" prefWidth="145.0" />
+      <ListView fx:id="fileList" layoutX="12.0" layoutY="160.0" onMouseClicked="#listSelect" prefHeight="161.0" prefWidth="248.0" />
     </children>
 </Pane>
