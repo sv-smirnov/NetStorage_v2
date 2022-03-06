@@ -9,6 +9,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,9 +19,18 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
     private String login;
     private ServerAuth serverAuth;
     private File dir;
+    private ServerDataHandler serverDataHandler;
 
-    public ServerHandler(ServerAuth serverAuth) {
-        this.serverAuth = serverAuth;
+    public ServerHandler(ServerAuth serverAuth, ServerDataHandler serverDataHandler) throws SQLException {
+        try {
+            Server.lastServerHandler = this;
+            this.serverDataHandler = serverDataHandler;
+            this.serverAuth = serverAuth;
+            serverAuth.start();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
 
@@ -63,6 +73,13 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
             sendFileList(channelHandlerContext);
             System.out.println(b);
         }
+
+        if (s.startsWith("/download")) {
+            filename = s.substring(10);
+            serverDataHandler.download(dir, filename);
+        }
+
+
 
 
     }

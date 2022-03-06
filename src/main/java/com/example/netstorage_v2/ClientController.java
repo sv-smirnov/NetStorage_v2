@@ -13,8 +13,8 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class ClientController implements Initializable {
-    private String fileName;
-    private String filePath;
+    public String fileName;
+    public String filePath;
 
     ClientConnection clientConnection;
     @FXML
@@ -123,5 +123,10 @@ public class ClientController implements Initializable {
     public void delete(ActionEvent actionEvent) {
         fileList.getItems().clear();
         clientConnection.send("/delete " + fileName);
+    }
+
+    public void download(ActionEvent actionEvent) {
+        clientConnection.send("/download " + fileName);
+
     }
 }

@@ -1,4 +1,5 @@
 package com.example.netstorage_v2;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -13,31 +14,58 @@ import java.sql.SQLException;
 
 
 public class Server {
+    public static ServerHandler lastServerHandler;
+    public static ServerDataHandler lastServerDataHandler;
     public static void main(String[] args) throws InterruptedException, SQLException {
-        ServerAuth serverAuth = new ServerAuth();
-        serverAuth.start();
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
-        try {
-            ServerBootstrap b = new ServerBootstrap();
-            b.group(bossGroup,workerGroup)
-                    .channel(NioServerSocketChannel.class)
-                    .childHandler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        protected void initChannel(SocketChannel socketChannel) throws Exception {
-                            socketChannel.pipeline().addLast(new StringDecoder(), new StringEncoder(), new ServerHandler(serverAuth));
+        ServerBootstrap b = new ServerBootstrap();
+        b.group(bossGroup, workerGroup)
+                .channel(NioServerSocketChannel.class)
+                .childHandler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    protected void initChannel(SocketChannel socketChannel) throws Exception {
+                        socketChannel.pipeline().addLast(new StringDecoder(), new StringEncoder(), new ServerHandler(new ServerAuth(), lastServerDataHandler));
+                    }
+                });
 
-                        }
-                    });
-            ChannelFuture future = b.bind(45001).sync();
-            future.channel().closeFuture().sync();
+        EventLoopGroup bossGroup2 = new NioEventLoopGroup(1);
+        EventLoopGroup workerGroup2 = new NioEventLoopGroup();
+        ServerBootstrap b2 = new ServerBootstrap();
+        b2.group(bossGroup2, workerGroup2)
+                .channel(NioServerSocketChannel.class)
+                .childHandler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    protected void initChannel(SocketChannel socketChannel2) throws Exception {
+                        socketChannel2.pipeline().addLast(new ServerDataHandler(lastServerHandler));
+                    }
+                });
+
+        Thread t1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ChannelFuture future = b.bind(45001).sync();
+                    System.out.println("Сервис метаданных запущен");
+                    future.channel().closeFuture().sync();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    bossGroup.shutdownGracefully();
+                    workerGroup.shutdownGracefully();
+                }
+            }
+        });
+        t1.start();
+        try {
+            ChannelFuture future2 = b2.bind(45002).sync();
+            System.out.println("Сервис передачи данных запущен");
+            future2.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
-        finally {
-            bossGroup.shutdownGracefully();
-            workerGroup.shutdownGracefully();
-            serverAuth.stop();
+        } finally {
+            bossGroup2.shutdownGracefully();
+            workerGroup2.shutdownGracefully();
         }
 
     }

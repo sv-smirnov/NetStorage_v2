@@ -11,6 +11,7 @@ import io.netty.handler.codec.string.StringEncoder;
 public class ClientConnection {
 
     private SocketChannel channel;
+    private SocketChannel channel2;
     ClientController clientController;
 
     public ClientConnection(ClientController clientController) {
@@ -36,15 +37,43 @@ public class ClientConnection {
             } finally {
                 workerGroup.shutdownGracefully();
             }
-
-
         });
+
+        Thread t2 = new Thread(() -> {
+            EventLoopGroup workerGroup2 = new NioEventLoopGroup();
+            try {
+                Bootstrap b2 = new Bootstrap();
+                b2.group(workerGroup2)
+                        .channel(NioSocketChannel.class)
+                        .handler(new ChannelInitializer<SocketChannel>() {
+                            @Override
+                            protected void initChannel(SocketChannel socketChannel2) throws Exception {
+                                channel2 = socketChannel2;
+                                socketChannel2.pipeline().addLast(new ClientDataHandler(clientController) {
+                                });
+                            }
+                        });
+                ChannelFuture channelFuture2 = b2.connect("localhost", 45002).sync();
+                channelFuture2.channel().closeFuture().sync();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                workerGroup2.shutdownGracefully();
+            }
+        });
+
+
         t.setDaemon(true);
         t.start();
+        t2.setDaemon(true);
+        t2.start();
     }
     public void send (String s) {
         channel.writeAndFlush(s);
+    }
 
+    public void sendData (String s) {
+        channel.writeAndFlush(s);
     }
 
 

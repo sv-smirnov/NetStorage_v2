@@ -21,7 +21,6 @@ public class ServerAuth {
     private List<User> users;
 
     public void start() throws SQLException {
-        System.out.println("Сервис аутентификации запущен");
         connection = DriverManager.getConnection("jdbc:sqlite:users.db");
         statement = connection.createStatement();
         users = new ArrayList<>();
