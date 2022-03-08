@@ -12,16 +12,18 @@ import java.nio.channels.FileChannel;
 public class ServerDataHandler extends ChannelInboundHandlerAdapter {
     private ServerHandler serverHandler;
     ChannelHandlerContext channelHandlerContext;
-    public ServerDataHandler(ServerHandler serverHandler) {
-        Server.lastServerDataHandler = this;
-        this.serverHandler = serverHandler;
+
+    public ServerDataHandler() {
+            serverHandler = Server.lastServerHandler;
+            serverHandler.serverDataHandler = this;
+            Server.lastServerHandler = null;
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+
         channelHandlerContext=ctx;
         System.out.println(channelHandlerContext);
-
     }
 
     @Override
@@ -39,14 +41,13 @@ public class ServerDataHandler extends ChannelInboundHandlerAdapter {
         RandomAccessFile file = new RandomAccessFile(filePath, "rw");
         FileChannel fileChannel = file.getChannel();
         ByteBuffer byteBuffer = ByteBuffer.allocate(4096);
-        System.out.println("Отправляю " + filename);
+        System.out.println("Отправляю " + serverHandler.login + " файл " + filename);
         while (fileChannel.read(byteBuffer) != -1) {
             byteBuffer.flip();
             channelHandlerContext.writeAndFlush(byteBuffer);
+            System.out.println(byteBuffer);
             byteBuffer.clear();
         }
         System.out.println("Готово");
-
-
     }
 }

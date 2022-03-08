@@ -25,7 +25,7 @@ public class Server {
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
-                        socketChannel.pipeline().addLast(new StringDecoder(), new StringEncoder(), new ServerHandler(new ServerAuth(), lastServerDataHandler));
+                        socketChannel.pipeline().addLast(new StringDecoder(), new StringEncoder(), new ServerHandler(new ServerAuth()));
                     }
                 });
 
@@ -37,7 +37,7 @@ public class Server {
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel socketChannel2) throws Exception {
-                        socketChannel2.pipeline().addLast(new ServerDataHandler(lastServerHandler));
+                        socketChannel2.pipeline().addLast(new ServerDataHandler());
                     }
                 });
 
@@ -67,6 +67,7 @@ public class Server {
             bossGroup2.shutdownGracefully();
             workerGroup2.shutdownGracefully();
         }
+
 
     }
 }

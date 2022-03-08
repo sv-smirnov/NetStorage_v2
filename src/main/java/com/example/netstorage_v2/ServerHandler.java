@@ -15,16 +15,18 @@ import java.util.List;
 
 public class ServerHandler extends SimpleChannelInboundHandler<String> {
     private static final List<Channel> channels = new ArrayList<>();
-    private String filename;
-    private String login;
-    private ServerAuth serverAuth;
-    private File dir;
-    private ServerDataHandler serverDataHandler;
+    public String filename;
+    public String login;
+    public ServerAuth serverAuth;
+    public File dir;
+    public ServerDataHandler serverDataHandler;
 
-    public ServerHandler(ServerAuth serverAuth, ServerDataHandler serverDataHandler) throws SQLException {
+    public ServerHandler(ServerAuth serverAuth) throws SQLException {
+
+        Server.lastServerHandler = this;
+
+
         try {
-            Server.lastServerHandler = this;
-            this.serverDataHandler = serverDataHandler;
             this.serverAuth = serverAuth;
             serverAuth.start();
         } catch (SQLException e) {
@@ -36,7 +38,9 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("Клиент подключился " + ctx);
+
+
+        System.out.println(ctx);
         channels.add(ctx.channel());
     }
 
