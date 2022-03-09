@@ -22,9 +22,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
     public ServerDataHandler serverDataHandler;
 
     public ServerHandler(ServerAuth serverAuth) throws SQLException {
-
         Server.lastServerHandler = this;
-
 
         try {
             this.serverAuth = serverAuth;
@@ -38,7 +36,9 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-
+        while (Server.lastServerDataHandler == null) {}
+        serverDataHandler = Server.lastServerDataHandler;
+        Server.lastServerDataHandler = null;
 
         System.out.println(ctx);
         channels.add(ctx.channel());
@@ -80,7 +80,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
 
         if (s.startsWith("/download")) {
             filename = s.substring(10);
-            serverDataHandler.download(dir, filename);
+            serverDataHandler.download(dir, filename, login);
         }
 
 

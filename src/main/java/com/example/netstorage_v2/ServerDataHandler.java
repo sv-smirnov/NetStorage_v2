@@ -10,13 +10,11 @@ import java.nio.channels.FileChannel;
 
 
 public class ServerDataHandler extends ChannelInboundHandlerAdapter {
-    private ServerHandler serverHandler;
+
     ChannelHandlerContext channelHandlerContext;
 
     public ServerDataHandler() {
-            serverHandler = Server.lastServerHandler;
-            serverHandler.serverDataHandler = this;
-            Server.lastServerHandler = null;
+            Server.lastServerDataHandler = this;
     }
 
     @Override
@@ -36,12 +34,12 @@ public class ServerDataHandler extends ChannelInboundHandlerAdapter {
 
     }
 
-    public void download(File dir, String filename) throws IOException {
+    public void download(File dir, String filename, String login) throws IOException {
         String filePath = dir + "\\" + filename;
         RandomAccessFile file = new RandomAccessFile(filePath, "rw");
         FileChannel fileChannel = file.getChannel();
         ByteBuffer byteBuffer = ByteBuffer.allocate(4096);
-        System.out.println("Отправляю " + serverHandler.login + " файл " + filename);
+        System.out.println("Отправляю " + login + " файл " + filename);
         while (fileChannel.read(byteBuffer) != -1) {
             byteBuffer.flip();
             channelHandlerContext.writeAndFlush(byteBuffer);
