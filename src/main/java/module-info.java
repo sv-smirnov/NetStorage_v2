@@ -9,6 +9,7 @@ module com.example.netstorage_v2 {
     requires io.netty.buffer;
     requires io.netty.codec;
     requires java.sql;
+    requires io.netty.handler;
 
     opens com.example.netstorage_v2 to javafx.fxml;
     exports com.example.netstorage_v2;

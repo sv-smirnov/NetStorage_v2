@@ -1,11 +1,15 @@
 package com.example.netstorage_v2;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.stream.ChunkedNioFile;
 
 import java.io.*;
 import java.nio.ByteBuffer;
 
+import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
 
@@ -39,14 +43,17 @@ public class ServerDataHandler extends ChannelInboundHandlerAdapter {
         String filePath = dir + "\\" + filename;
         RandomAccessFile file = new RandomAccessFile(filePath, "rw");
         FileChannel fileChannel = file.getChannel();
-        ByteBuffer byteBuffer = ByteBuffer.allocate(4096);
+        ByteBuf byteBuf = channelHandlerContext.alloc().buffer(4096);
+        MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, file.length());
         System.out.println("Отправляю " + login + " файл " + filename);
-        while (fileChannel.read(byteBuffer) != -1) {
-            byteBuffer.flip();
-            channelHandlerContext.writeAndFlush(byteBuffer);
-            System.out.println(byteBuffer);
-            byteBuffer.clear();
-        }
+        byteBuf = Unpooled.wrappedBuffer(mappedByteBuffer);
+//        while (fileChannel.read((ByteBuffer) byteBuf) != -1) {
+////
+////            channelHandlerContext.writeAndFlush(byteBuffer);
+////            byteBuffer.clear();
+////        }
+        channelHandlerContext.writeAndFlush(byteBuf);
+
         System.out.println("Готово");
     }
 }
