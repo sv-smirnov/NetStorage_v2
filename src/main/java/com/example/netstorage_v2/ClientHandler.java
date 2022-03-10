@@ -16,9 +16,14 @@ public class ClientHandler extends SimpleChannelInboundHandler<String> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) throws Exception {
-        System.out.println(s);
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("ClientHandler.channelActive");
 
+    }
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) throws Exception {
+        System.out.println("ClientHandler.channelRead");
         if (s.startsWith("/authok")) {
             controller.setAuthorized(true);
         }

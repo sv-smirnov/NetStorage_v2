@@ -36,16 +36,16 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("ServerHandler.channelActive");
         while (Server.lastServerDataHandler == null) {}
         serverDataHandler = Server.lastServerDataHandler;
         Server.lastServerDataHandler = null;
-
-        System.out.println(ctx);
         channels.add(ctx.channel());
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) throws Exception {
+        System.out.println("ServerHandler.channelRead");
         System.out.println(s);
         if (s.startsWith("/auth")) {
             login = s.split("\\s")[1];

@@ -19,13 +19,13 @@ public class ServerDataHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-
+        System.out.println("ServerDataHandler.channelActive");
         channelHandlerContext=ctx;
-        System.out.println(channelHandlerContext);
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        System.out.println("ServerDataHandler.channelRead");
 
     }
 
@@ -35,6 +35,7 @@ public class ServerDataHandler extends ChannelInboundHandlerAdapter {
     }
 
     public void download(File dir, String filename, String login) throws IOException {
+        System.out.println("ServerDataHandler.download");
         String filePath = dir + "\\" + filename;
         RandomAccessFile file = new RandomAccessFile(filePath, "rw");
         FileChannel fileChannel = file.getChannel();

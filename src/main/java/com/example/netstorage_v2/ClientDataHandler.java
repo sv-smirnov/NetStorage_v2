@@ -16,13 +16,13 @@ public class ClientDataHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("!!!");
+        System.out.println("ClientDataHandler.channelActive");
 
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        System.out.println("Входящий файл...");
+        System.out.println("ClientDataHandler.channelRead");
         RandomAccessFile file = new RandomAccessFile(clientController.fileName, "rw");
         FileChannel fileChannel = file.getChannel();
         fileChannel.read((ByteBuffer) msg);
