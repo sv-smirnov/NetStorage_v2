@@ -26,12 +26,13 @@ public class ClientDataHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        System.out.println("ClientDataHandler.channelRead");
         ByteBuf byteBuf = (ByteBuf) msg;
-        RandomAccessFile file = new RandomAccessFile(clientController.fileName, "rw");
-        FileChannel fileChannel = file.getChannel();
         ByteBuffer byteBuffer = byteBuf.nioBuffer();
-        fileChannel.read(byteBuffer);
+        RandomAccessFile file = clientController.downloadedFile;
+        FileChannel fileChannel = file.getChannel();
+            fileChannel.write(byteBuffer);
+            byteBuf.clear();
+
     }
 
     @Override

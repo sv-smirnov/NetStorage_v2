@@ -8,6 +8,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.RandomAccessFile;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -15,6 +17,7 @@ import java.util.ResourceBundle;
 public class ClientController implements Initializable {
     public String fileName;
     public String filePath;
+    public RandomAccessFile downloadedFile;
 
     ClientConnection clientConnection;
     @FXML
@@ -125,8 +128,9 @@ public class ClientController implements Initializable {
         clientConnection.send("/delete " + fileName);
     }
 
-    public void download(ActionEvent actionEvent) {
+    public void download(ActionEvent actionEvent) throws FileNotFoundException {
         clientConnection.send("/download " + fileName);
+        downloadedFile = new RandomAccessFile(fileName, "rw");
 
     }
 }

@@ -43,17 +43,10 @@ public class ServerDataHandler extends ChannelInboundHandlerAdapter {
         String filePath = dir + "\\" + filename;
         RandomAccessFile file = new RandomAccessFile(filePath, "rw");
         FileChannel fileChannel = file.getChannel();
-        ByteBuf byteBuf = channelHandlerContext.alloc().buffer(4096);
         MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, file.length());
         System.out.println("Отправляю " + login + " файл " + filename);
-        byteBuf = Unpooled.wrappedBuffer(mappedByteBuffer);
-//        while (fileChannel.read((ByteBuffer) byteBuf) != -1) {
-////
-////            channelHandlerContext.writeAndFlush(byteBuffer);
-////            byteBuffer.clear();
-////        }
+        ByteBuf byteBuf = Unpooled.wrappedBuffer(mappedByteBuffer);
         channelHandlerContext.writeAndFlush(byteBuf);
-
         System.out.println("Готово");
     }
 }
