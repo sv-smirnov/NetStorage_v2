@@ -138,7 +138,7 @@ public class ClientController implements Initializable {
 
     public void download(ActionEvent actionEvent) throws FileNotFoundException {
         clientConnection.send("/download " + fileName);
-        downloadedFile = new RandomAccessFile(fileName, "rw");
+        downloadedFile = new RandomAccessFile("download" + "\\" + fileName, "rw");
     }
 
     public void upload(ActionEvent actionEvent) throws IOException {
