@@ -1,6 +1,7 @@
 package com.example.netstorage_v2;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -13,11 +14,13 @@ import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 
+import java.nio.channels.FileChannel;
+
 public class ClientConnection {
 
     private SocketChannel channel;
-    private SocketChannel channel2;
     ClientController clientController;
+
 
     public ClientConnection(ClientController clientController) {
         this.clientController = clientController;
@@ -53,7 +56,6 @@ public class ClientConnection {
                         .handler(new ChannelInitializer<SocketChannel>() {
                             @Override
                             protected void initChannel(SocketChannel socketChannel2) throws Exception {
-                                channel2 = socketChannel2;
                                 socketChannel2.pipeline().addLast(new ClientDataHandler(clientController) {
                                 });
                             }
@@ -73,13 +75,9 @@ public class ClientConnection {
         t2.setDaemon(true);
         t2.start();
     }
-    public void send (String s) {
+
+    public void send(String s) {
         channel.writeAndFlush(s);
     }
-
-    public void sendData (String s) {
-        channel.writeAndFlush(s);
-    }
-
 
 }

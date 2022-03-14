@@ -36,11 +36,6 @@ public class ClientHandler extends SimpleChannelInboundHandler<String> {
             for (int i = 0; i < str.length; i++) {
                 controller.fileList.getItems().add(str[i]);
             }
-
-
-
-
-
         }
 
 

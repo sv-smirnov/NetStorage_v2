@@ -21,6 +21,7 @@ import java.sql.SQLException;
 public class Server {
     public static ServerHandler lastServerHandler;
     public static ServerDataHandler lastServerDataHandler;
+
     public static void main(String[] args) throws InterruptedException, SQLException {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();

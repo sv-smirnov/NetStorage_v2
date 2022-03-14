@@ -11,7 +11,7 @@
         <Label fx:id="passwordLabel" layoutX="14.0" layoutY="52.0" prefHeight="17.0" prefWidth="69.0" text="Password:" />
         <Button fx:id="sendAuthButton" layoutX="14.0" layoutY="89.0" mnemonicParsing="false" onAction="#sendAuth" prefHeight="25.0" prefWidth="108.0" text="LOGIN" />
         <Button fx:id="selectButton" layoutX="49.0" layoutY="358.0" mnemonicParsing="false" onAction="#selectFile" prefHeight="25.0" prefWidth="79.0" text="Select" />
-        <Button fx:id="uploadButton" layoutX="49.0" layoutY="397.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="79.0" text="Upload" />
+        <Button fx:id="uploadButton" onAction="#upload" layoutX="49.0" layoutY="397.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="79.0" text="Upload" />
         <Button fx:id="deleteButton" onAction="#delete" layoutX="167.0" layoutY="358.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="79.0" text="Delete" />
         <Button fx:id="downloadButton" onAction="#download" layoutX="167.0" layoutY="397.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="79.0" text="Download" />
       <Button fx:id="registrationButton" layoutX="153.0" layoutY="89.0" mnemonicParsing="false" onAction="#registration" prefHeight="25.0" prefWidth="108.0" text="REGISTRATION" />

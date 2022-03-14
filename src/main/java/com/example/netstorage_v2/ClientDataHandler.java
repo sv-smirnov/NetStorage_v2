@@ -13,13 +13,17 @@ import java.nio.channels.FileChannel;
 
 public class ClientDataHandler extends ChannelInboundHandlerAdapter {
     ClientController clientController;
+    ChannelHandlerContext channelHandlerContext;
 
     public ClientDataHandler(ClientController clientController) {
         this.clientController = clientController;
+
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        channelHandlerContext = ctx;
+        clientController.dataCtx = ctx;
         System.out.println("ClientDataHandler.channelActive");
 
     }
@@ -30,8 +34,8 @@ public class ClientDataHandler extends ChannelInboundHandlerAdapter {
         ByteBuffer byteBuffer = byteBuf.nioBuffer();
         RandomAccessFile file = clientController.downloadedFile;
         FileChannel fileChannel = file.getChannel();
-            fileChannel.write(byteBuffer);
-            byteBuf.clear();
+        fileChannel.write(byteBuffer);
+        byteBuf.clear();
 
     }
 

@@ -7,6 +7,8 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.io.File;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
@@ -37,7 +39,8 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         System.out.println("ServerHandler.channelActive");
-        while (Server.lastServerDataHandler == null) {}
+        while (Server.lastServerDataHandler == null) {
+        }
         serverDataHandler = Server.lastServerDataHandler;
         Server.lastServerDataHandler = null;
         channels.add(ctx.channel());
@@ -66,9 +69,11 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
             } else channelHandlerContext.writeAndFlush("Такая учетная запись уже существует!");
         }
 
-
         if (s.startsWith("/file")) {
             filename = s.substring(6);
+            RandomAccessFile uploadedFile = new RandomAccessFile(dir + "\\" + filename, "rw");
+            FileChannel fileChannel = uploadedFile.getChannel();
+            serverDataHandler.fileChannel = fileChannel;
         }
 
         if (s.startsWith("/delete")) {
@@ -83,8 +88,10 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
             serverDataHandler.download(dir, filename, login);
         }
 
-
-
+        if (s.startsWith("/upload")) {
+            filename = s.substring(8);
+            sendFileList(channelHandlerContext);
+        }
 
     }
 

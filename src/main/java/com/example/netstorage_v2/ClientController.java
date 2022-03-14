@@ -1,5 +1,8 @@
 package com.example.netstorage_v2;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandlerContext;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -9,8 +12,11 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.URL;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -18,8 +24,9 @@ public class ClientController implements Initializable {
     public String fileName;
     public String filePath;
     public RandomAccessFile downloadedFile;
-
     ClientConnection clientConnection;
+    ChannelHandlerContext dataCtx;
+
     @FXML
     TextField login;
     @FXML
@@ -103,14 +110,14 @@ public class ClientController implements Initializable {
 
     public void selectFile(ActionEvent actionEvent) {
 
-            FileChooser fileChooser = new FileChooser();
-            File selectedFile = fileChooser.showOpenDialog(null);
-            if (selectedFile != null) {
-                fileName = selectedFile.getName();
-                clientConnection.send("/file " + fileName);
-                filePath = selectedFile.getAbsolutePath();
-                fileInfo.setText(filePath);
-            } else System.out.println("Выберите файл");
+        FileChooser fileChooser = new FileChooser();
+        File selectedFile = fileChooser.showOpenDialog(null);
+        if (selectedFile != null) {
+            fileName = selectedFile.getName();
+            clientConnection.send("/file " + fileName);
+            filePath = selectedFile.getAbsolutePath();
+            fileInfo.setText(filePath);
+        } else System.out.println("Выберите файл");
 
     }
 
@@ -126,11 +133,22 @@ public class ClientController implements Initializable {
     public void delete(ActionEvent actionEvent) {
         fileList.getItems().clear();
         clientConnection.send("/delete " + fileName);
+        fileInfo.clear();
     }
 
     public void download(ActionEvent actionEvent) throws FileNotFoundException {
         clientConnection.send("/download " + fileName);
         downloadedFile = new RandomAccessFile(fileName, "rw");
+    }
 
+    public void upload(ActionEvent actionEvent) throws IOException {
+        System.out.println("ClientDataHandler.upload");
+        clientConnection.send("/upload " + fileName);
+        RandomAccessFile file = new RandomAccessFile(filePath, "rw");
+        FileChannel fileChannel = file.getChannel();
+        MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, file.length());
+        System.out.println("Отправляю файл " + fileName);
+        ByteBuf byteBuf = Unpooled.wrappedBuffer(mappedByteBuffer);
+        dataCtx.writeAndFlush(byteBuf);
     }
 }
