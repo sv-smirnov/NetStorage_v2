@@ -69,7 +69,6 @@ public class ClientConnection {
             }
         });
 
-
         t.setDaemon(true);
         t.start();
         t2.setDaemon(true);
@@ -79,5 +78,4 @@ public class ClientConnection {
     public void send(String s) {
         channel.writeAndFlush(s);
     }
-
 }

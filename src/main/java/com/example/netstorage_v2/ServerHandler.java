@@ -7,6 +7,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
@@ -16,12 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ServerHandler extends SimpleChannelInboundHandler<String> {
-    private static final List<Channel> channels = new ArrayList<>();
     public String filename;
     public String login;
     public ServerAuth serverAuth;
     public File dir;
     public ServerDataHandler serverDataHandler;
+    List<String> userFiles = new ArrayList<>();
 
     public ServerHandler(ServerAuth serverAuth) throws SQLException {
         Server.lastServerHandler = this;
@@ -38,17 +39,14 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("ServerHandler.channelActive");
         while (Server.lastServerDataHandler == null) {
         }
         serverDataHandler = Server.lastServerDataHandler;
         Server.lastServerDataHandler = null;
-        channels.add(ctx.channel());
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) throws Exception {
-        System.out.println("ServerHandler.channelRead");
         System.out.println(s);
         if (s.startsWith("/auth")) {
             login = s.split("\\s")[1];
@@ -69,18 +67,16 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
             } else channelHandlerContext.writeAndFlush("Такая учетная запись уже существует!");
         }
 
-        if (s.startsWith("/file")) {
-            filename = s.substring(6);
-            RandomAccessFile uploadedFile = new RandomAccessFile(dir + "\\" + filename, "rw");
-            FileChannel fileChannel = uploadedFile.getChannel();
-            serverDataHandler.fileChannel = fileChannel;
-        }
-
         if (s.startsWith("/delete")) {
+            filename = s.substring(8);
             String filePath = dir + "\\" + filename;
-            boolean b = Files.deleteIfExists(Paths.get(filePath));
+            try {
+                boolean b = Files.deleteIfExists(Paths.get(filePath));
+                System.out.println(b);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             sendFileList(channelHandlerContext);
-            System.out.println(b);
         }
 
         if (s.startsWith("/download")) {
@@ -90,6 +86,13 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
 
         if (s.startsWith("/upload")) {
             filename = s.substring(8);
+            RandomAccessFile uploadedFile = new RandomAccessFile(dir + "\\" + filename, "rw");
+            FileChannel fileChannel = uploadedFile.getChannel();
+            serverDataHandler.fileChannel = fileChannel;
+            sendFileList(channelHandlerContext);
+        }
+
+        if (s.startsWith("/list")) {
             sendFileList(channelHandlerContext);
         }
 
@@ -99,12 +102,11 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
         System.out.println(login + " отключился");
-        channels.remove(ctx.channel());
         ctx.close();
     }
 
     public void sendFileList(ChannelHandlerContext chc) {
-        List<String> userFiles = new ArrayList<>();
+        userFiles.clear();
         for (File f : dir.listFiles()) {
             if (f.isFile())
                 userFiles.add(f.getName());

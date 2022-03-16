@@ -17,15 +17,12 @@ public class ClientDataHandler extends ChannelInboundHandlerAdapter {
 
     public ClientDataHandler(ClientController clientController) {
         this.clientController = clientController;
-
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         channelHandlerContext = ctx;
         clientController.dataCtx = ctx;
-        System.out.println("ClientDataHandler.channelActive");
-
     }
 
     @Override
@@ -36,11 +33,9 @@ public class ClientDataHandler extends ChannelInboundHandlerAdapter {
         FileChannel fileChannel = file.getChannel();
         fileChannel.write(byteBuffer);
         byteBuf.clear();
-
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-
     }
 }

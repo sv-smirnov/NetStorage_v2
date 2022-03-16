@@ -17,13 +17,11 @@ public class ClientHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("ClientHandler.channelActive");
 
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) throws Exception {
-        System.out.println("ClientHandler.channelRead");
         if (s.startsWith("/authok")) {
             controller.setAuthorized(true);
         }
@@ -31,13 +29,11 @@ public class ClientHandler extends SimpleChannelInboundHandler<String> {
             controller.serverStatus.setText(s.substring(9));
         }
         if (s.contains("/list")) {
-            String[] str = s.substring(s.indexOf("/list") + 7).split(",");
             controller.fileList.getItems().clear();
+            String[] str = s.substring(s.indexOf("/list") + 7).split(",");
             for (int i = 0; i < str.length; i++) {
                 controller.fileList.getItems().add(str[i]);
             }
         }
-
-
     }
 }

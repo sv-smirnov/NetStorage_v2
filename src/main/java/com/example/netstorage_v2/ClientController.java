@@ -101,7 +101,6 @@ public class ClientController implements Initializable {
 
     public void registration(ActionEvent actionEvent) {
         String regMsg = "/reg " + login.getText() + " " + password.getText();
-        System.out.println(regMsg);
         clientConnection.send(regMsg);
         login.clear();
         password.clear();
@@ -109,12 +108,10 @@ public class ClientController implements Initializable {
 
 
     public void selectFile(ActionEvent actionEvent) {
-
         FileChooser fileChooser = new FileChooser();
         File selectedFile = fileChooser.showOpenDialog(null);
         if (selectedFile != null) {
             fileName = selectedFile.getName();
-            clientConnection.send("/file " + fileName);
             filePath = selectedFile.getAbsolutePath();
             fileInfo.setText(filePath);
         } else System.out.println("Выберите файл");
@@ -125,24 +122,25 @@ public class ClientController implements Initializable {
         if (fileList.getSelectionModel().getSelectedItem() != null) {
             fileName = fileList.getSelectionModel().getSelectedItem().toString();
             fileInfo.setText(fileName);
-            clientConnection.send("/file " + fileName);
             fileList.getSelectionModel().clearSelection();
         }
     }
 
     public void delete(ActionEvent actionEvent) {
+        fileInfo.clear();
         fileList.getItems().clear();
         clientConnection.send("/delete " + fileName);
-        fileInfo.clear();
+        fileInfo.setText(fileName + " удален с сервера");
+
     }
 
     public void download(ActionEvent actionEvent) throws FileNotFoundException {
         clientConnection.send("/download " + fileName);
         downloadedFile = new RandomAccessFile("download" + "\\" + fileName, "rw");
+        fileInfo.setText(fileName + " сохранен в ...\\download");
     }
 
     public void upload(ActionEvent actionEvent) throws IOException {
-        System.out.println("ClientDataHandler.upload");
         clientConnection.send("/upload " + fileName);
         RandomAccessFile file = new RandomAccessFile(filePath, "rw");
         FileChannel fileChannel = file.getChannel();
@@ -150,5 +148,7 @@ public class ClientController implements Initializable {
         System.out.println("Отправляю файл " + fileName);
         ByteBuf byteBuf = Unpooled.wrappedBuffer(mappedByteBuffer);
         dataCtx.writeAndFlush(byteBuf);
+        fileInfo.setText(fileName + " загружен на сервер");
+        clientConnection.send("/list");
     }
 }

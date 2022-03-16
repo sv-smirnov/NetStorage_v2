@@ -24,16 +24,15 @@ public class ServerDataHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("ServerDataHandler.channelActive");
         channelHandlerContext = ctx;
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        System.out.println("ServerDataHandler.channelRead");
         ByteBuf byteBuf = (ByteBuf) msg;
         ByteBuffer byteBuffer = byteBuf.nioBuffer();
-        while (fileChannel == null) {}
+        while (fileChannel == null) {
+        }
         fileChannel.write(byteBuffer);
         byteBuf.clear();
         ctx.flush();
