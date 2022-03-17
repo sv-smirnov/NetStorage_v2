@@ -35,5 +35,14 @@ public class ClientHandler extends SimpleChannelInboundHandler<String> {
                 controller.fileList.getItems().add(str[i]);
             }
         }
+        if (s.startsWith("/size")) {
+            double size = Double.parseDouble(s.substring(6));
+            controller.freeSpace.setText(s.substring(6) + "/1000 MB");
+            if (size >= 1000) {
+                controller.freeSpace.setText(s.substring(6) + "/1000 MB. Объем превышен!");
+                controller.uploadButton.setDisable(true);
+            }
+            else controller.uploadButton.setDisable(false);
+        }
     }
 }

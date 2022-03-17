@@ -53,6 +53,8 @@ public class ClientController implements Initializable {
     TextField fileInfo;
     @FXML
     ListView<String> fileList;
+    @FXML
+    TextField freeSpace;
 
 
     @Override
@@ -83,6 +85,7 @@ public class ClientController implements Initializable {
             deleteButton.setDisable(false);
             uploadButton.setDisable(false);
             fileInfo.setDisable(false);
+            freeSpace.setDisable(false);
         } else {
             serverStatus.setText("Введите логин/пароль");
             login.setDisable(false);
@@ -96,6 +99,7 @@ public class ClientController implements Initializable {
             deleteButton.setDisable(true);
             uploadButton.setDisable(true);
             fileInfo.setDisable(true);
+            freeSpace.setDisable(true);
         }
     }
 

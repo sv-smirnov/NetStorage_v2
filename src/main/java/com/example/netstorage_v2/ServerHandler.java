@@ -22,6 +22,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
     public ServerAuth serverAuth;
     public File dir;
     public ServerDataHandler serverDataHandler;
+    public long usedSpace = 0;
     List<String> userFiles = new ArrayList<>();
 
     public ServerHandler(ServerAuth serverAuth) throws SQLException {
@@ -107,9 +108,11 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
 
     public void sendFileList(ChannelHandlerContext chc) {
         userFiles.clear();
+        usedSpace = 0;
         for (File f : dir.listFiles()) {
             if (f.isFile())
                 userFiles.add(f.getName());
+            usedSpace = usedSpace + f.length();
         }
         String sendingMsg = "/list ";
         for (int i = 0; i < userFiles.size(); i++) {
@@ -117,6 +120,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
             sendingMsg = sendingMsg.concat("," + s);
         }
         chc.writeAndFlush(sendingMsg);
+        chc.writeAndFlush("/size " + usedSpace/1024/1024);
     }
 
     public void createDirectory() {
