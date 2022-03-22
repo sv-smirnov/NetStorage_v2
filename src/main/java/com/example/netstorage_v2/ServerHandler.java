@@ -56,6 +56,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
                 channelHandlerContext.writeAndFlush("/authok");
                 createDirectory();
                 sendFileList(channelHandlerContext);
+                getSize(channelHandlerContext);
             } else channelHandlerContext.writeAndFlush("/servMsg " + "Неверный логин/пароль!");
         }
         if (s.startsWith("/reg")) {
@@ -65,6 +66,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
                 channelHandlerContext.writeAndFlush("/authok");
                 createDirectory();
                 sendFileList(channelHandlerContext);
+                getSize(channelHandlerContext);
             } else channelHandlerContext.writeAndFlush("Такая учетная запись уже существует!");
         }
 
@@ -78,6 +80,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
                 e.printStackTrace();
             }
             sendFileList(channelHandlerContext);
+            getSize(channelHandlerContext);
         }
 
         if (s.startsWith("/download")) {
@@ -91,10 +94,12 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
             FileChannel fileChannel = uploadedFile.getChannel();
             serverDataHandler.fileChannel = fileChannel;
             sendFileList(channelHandlerContext);
+            getSize(channelHandlerContext);
         }
 
         if (s.startsWith("/list")) {
             sendFileList(channelHandlerContext);
+            getSize(channelHandlerContext);
         }
 
     }
@@ -120,8 +125,10 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
             sendingMsg = sendingMsg.concat("," + s);
         }
         chc.writeAndFlush(sendingMsg);
-        chc.writeAndFlush("/size " + usedSpace/1024/1024);
+//        chc.writeAndFlush("/size " + usedSpace/1024/1024);
     }
+    public void getSize (ChannelHandlerContext chc) {chc.writeAndFlush("/size " + usedSpace/1024/1024);}
+
 
     public void createDirectory() {
         dir = new File("storage/" + login);
