@@ -4,6 +4,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.DefaultFileRegion;
+import io.netty.channel.FileRegion;
 import io.netty.handler.stream.ChunkedNioFile;
 
 import java.io.*;
@@ -44,14 +46,15 @@ public class ServerDataHandler extends ChannelInboundHandlerAdapter {
     }
 
     public void download(File dir, String filename, String login) throws IOException {
-        System.out.println("ServerDataHandler.download");
         String filePath = dir + "\\" + filename;
         RandomAccessFile file = new RandomAccessFile(filePath, "rw");
         FileChannel fileChannel = file.getChannel();
-        MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, file.length());
+        FileRegion fileRegion = new DefaultFileRegion(fileChannel, 0, file.length());
+//        MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, file.length());
         System.out.println("Отправляю " + login + " файл " + filename);
-        ByteBuf byteBuf = Unpooled.wrappedBuffer(mappedByteBuffer);
-        channelHandlerContext.writeAndFlush(byteBuf);
+//        ByteBuf byteBuf = Unpooled.wrappedBuffer(mappedByteBuffer);
+//        channelHandlerContext.writeAndFlush(byteBuf);
+        channelHandlerContext.writeAndFlush(fileRegion);
         System.out.println("Готово");
     }
 }

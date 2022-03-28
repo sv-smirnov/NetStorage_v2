@@ -1,10 +1,7 @@
 package com.example.netstorage_v2;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +45,6 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) throws Exception {
-        System.out.println(s);
         if (s.startsWith("/auth")) {
             login = s.split("\\s")[1];
             String pass = s.split("\\s")[2];
@@ -93,8 +89,8 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
             RandomAccessFile uploadedFile = new RandomAccessFile(dir + "\\" + filename, "rw");
             FileChannel fileChannel = uploadedFile.getChannel();
             serverDataHandler.fileChannel = fileChannel;
-            sendFileList(channelHandlerContext);
-            getSize(channelHandlerContext);
+//            sendFileList(channelHandlerContext);
+//            getSize(channelHandlerContext);
         }
 
         if (s.startsWith("/list")) {
@@ -111,7 +107,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
         ctx.close();
     }
 
-    public void sendFileList(ChannelHandlerContext chc) {
+    public void sendFileList(ChannelHandlerContext chc) throws InterruptedException {
         userFiles.clear();
         usedSpace = 0;
         for (File f : dir.listFiles()) {
@@ -124,10 +120,11 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
             String s = userFiles.get(i);
             sendingMsg = sendingMsg.concat("," + s);
         }
-        chc.writeAndFlush(sendingMsg);
+        ChannelFuture f = chc.writeAndFlush(sendingMsg + "\n");
+        f.sync();
 //        chc.writeAndFlush("/size " + usedSpace/1024/1024);
     }
-    public void getSize (ChannelHandlerContext chc) {chc.writeAndFlush("/size " + usedSpace/1024/1024);}
+    public void getSize (ChannelHandlerContext chc) {chc.writeAndFlush("/size " + usedSpace);}
 
 
     public void createDirectory() {

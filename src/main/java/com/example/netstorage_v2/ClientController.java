@@ -3,6 +3,8 @@ package com.example.netstorage_v2;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.DefaultFileRegion;
+import io.netty.channel.FileRegion;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -149,10 +151,12 @@ public class ClientController implements Initializable {
         clientConnection.send("/upload " + fileName);
         RandomAccessFile file = new RandomAccessFile(filePath, "rw");
         FileChannel fileChannel = file.getChannel();
-        MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, file.length());
-        System.out.println("Отправляю файл " + fileName);
-        ByteBuf byteBuf = Unpooled.wrappedBuffer(mappedByteBuffer);
-        dataCtx.writeAndFlush(byteBuf);
+        FileRegion fileRegion = new DefaultFileRegion(fileChannel, 0, file.length());
+        dataCtx.writeAndFlush(fileRegion);
+//        MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, file.length());
+//        System.out.println("Отправляю файл " + fileName);
+//        ByteBuf byteBuf = Unpooled.wrappedBuffer(mappedByteBuffer);
+//        dataCtx.writeAndFlush(byteBuf);
         fileInfo.setText(fileName + " загружен на сервер");
         clientConnection.send("/list");
     }

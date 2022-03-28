@@ -22,6 +22,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) throws Exception {
+        System.out.println(s);
         if (s.startsWith("/authok")) {
             controller.setAuthorized(true);
         }
@@ -30,16 +31,17 @@ public class ClientHandler extends SimpleChannelInboundHandler<String> {
         }
         if (s.contains("/list")) {
             controller.fileList.getItems().clear();
-            String[] str = s.substring(s.indexOf("/list") + 7).split(",");
-            for (int i = 0; i < str.length; i++) {
+            String[] str = s.substring(s.indexOf("/list")).split(",");
+            for (int i = 1; i < str.length; i++) {
                 controller.fileList.getItems().add(str[i]);
             }
         }
-        if (s.startsWith("/size")) {
-            double size = Double.parseDouble(s.substring(6));
-            controller.freeSpace.setText(s.substring(6) + "/1000 MB");
+        if (s.contains("/size")) {
+            Long size = Long.parseLong(s.substring(s.indexOf("/size" )+ 6))/1048576;
+            controller.freeSpace.clear();
+            controller.freeSpace.setText(size + "/1000 MB");
             if (size >= 1000) {
-                controller.freeSpace.setText(s.substring(6) + "/1000 MB. Объем превышен!");
+                controller.freeSpace.setText(size + "/1000 MB. Объем превышен!");
                 controller.uploadButton.setDisable(true);
             }
             else controller.uploadButton.setDisable(false);
